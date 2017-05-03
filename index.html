@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body ng-app="images">
+
+<div ng-controller="MainController as ctrl">
+
+  <h1>search</h1>
+  <label for="pages"> number of pages to load </label>
+  <input id="pages" ng-model="pages" ng-init="pages = 1">
+  <button ng-click="ctrl.flickrSearch(pages)">flickr</button>
+
+
+  <div show-if-loading>loading.......</div>
+  <ul>
+    <li ng-repeat="result in ctrl.results">
+      date taken: {{result.datetaken}} {{result.datetakenunknown? '(?)':''}}<br/>
+      date uploaded: {{result.dateupload*1000 | date}}<br/>
+                <pre ng-if="false">
+                  RESULT JSON <br/>{{result | json}}
+                </pre>
+      <a ng-href="{{result.url_o}}" target="_blank">
+        <img ng-src="{{result.url_sq}}" width="300"/>
+      </a>
+    </li>
+  </ul>
+
+</div>
+<!--
+
+<script>
+  (function() {
+    var cx = '000470345141694594996:sdx6p7dlw3o';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+</script>
+<gcse:search></gcse:search>
+-->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.1/angular.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-local-storage/0.5.2/angular-local-storage.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

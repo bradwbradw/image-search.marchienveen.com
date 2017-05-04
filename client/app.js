@@ -7,7 +7,6 @@ angular.module('images')
     function ($http, $log, $q) {
 
       var MainController = this;
-      var results;
 
       var flickr = {
         key: '1bae316db388283e09cfd3bc537484ab',

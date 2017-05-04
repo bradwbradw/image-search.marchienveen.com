@@ -1,0 +1,27 @@
+{
+  "name": "image-search.marchienveen.com",
+  "version": "1.0.0",
+  "description": "",
+  "main": "serve.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bradwbradw/image-search.marchienveen.com.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bradwbradw/image-search.marchienveen.com/issues"
+  },
+  "homepage": "https://github.com/bradwbradw/image-search.marchienveen.com#readme",
+  "dependencies": {
+    "express": "^4.15.2",
+    "lodash": "^4.17.4",
+    "mongodb": "^2.2.26",
+    "request": "^2.81.0",
+    "request-promise": "^4.2.0",
+    "when": "^3.7.8"
+  }
+}

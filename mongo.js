@@ -1,6 +1,6 @@
 const MongoClient = require('mongodb').MongoClient,
   _ = require('lodash'),
-  mongoUrl = process.env.MONGO_URL || 'mongodb://localhost/images',
+  mongoUrl = process.env.MONGODB_URI || 'mongodb://localhost/images',
   when = require('when');
 
 /*

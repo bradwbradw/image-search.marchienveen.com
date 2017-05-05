@@ -9,9 +9,9 @@
 <div ng-controller="MainController as ctrl">
 
   <h1>search</h1>
-  <label for="pages"> number of pages to load </label>
-  <input id="pages" ng-model="pages" ng-init="pages = 1">
-  <button ng-click="ctrl.flickrSearch(pages)">flickr</button>
+  <label for="date"> date </label>
+  <input id="date" ng-model="date" type="datetime-local">
+  <button ng-click="ctrl.flickrSearch(date)">flickr</button>
 
 
   <div show-if-loading>loading.......</div>

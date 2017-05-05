@@ -4,6 +4,9 @@ const express = require('express'),
   when = require('when');
 
 const port = process.env.PORT || 8081;
+const MAX_IMAGES = process.env.MAX_IMAGES || 1000000;
+const LOAD_INTERVAL = process.env.LOAD_INTERVAL || 5*60*1000;
+
 const db = require('./mongo'),
   flickr = require('./flickr');
 
@@ -38,22 +41,36 @@ app.get('/search/:q', (req, res) => {
   }
 });
 
-app.get('/load-flickr', (req, res) => {
-
+function loadFlickr() {
   let count;
 
-  db.count()
+  return db.count()
     .then(c => {
-      count = c;
-      return flickr.getRecent(2);
+      if (c >= MAX_IMAGES) {
+        return when.reject('max photos reached');
+      } else {
+        count = c;
+        return flickr.getRecent(2);
+      }
     })
     .then(results => {
       return when.all(_.map(results, db.upsert))
     })
     .then(db.count)
     .then(newTotal => {
-      let info = {newTotal, justAdded:(newTotal - count)};
+      let info = {newTotal, justAdded: (newTotal - count)};
       console.log(info);
+      return info
+    })
+}
+
+loadFlickr();
+setInterval(loadFlickr, LOAD_INTERVAL);
+
+app.get('/load-flickr', (req, res) => {
+
+  loadFlickr()
+    .then(info => {
       res.json(info);
     })
     .catch(err => {

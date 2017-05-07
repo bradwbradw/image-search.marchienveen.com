@@ -16,10 +16,10 @@ app.use(express.static('client'));
 
 console.log(`listening at ${port} `);
 
-app.get('/search/:q', (req, res) => {
+app.get('/search', (req, res) => {
   let query;
   try {
-    query = JSON.parse(req.params.q)
+    query = JSON.parse(req.query.q)
   } catch (err) {
     res.status(500).json({message: `could not parse JSON. got ${req.params.q}`, error: err});
   }

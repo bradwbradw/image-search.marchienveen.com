@@ -64,13 +64,15 @@ module.exports = {
       count++;
     }
 
-    function clean(results){
+    function clean(results) {
       return _.map(_.flatten(results), result => {
 //        console.log('cleaning', result);
         let clean = _.pick(result, pickFields);
-        clean.url = clean.url_o? clean.url_o : _.get(clean, 'url_l', 'url not found');
-        clean.thumb = clean.url_sq;
-        _.each(['url_o', 'url_l', 'url_sq'], prop =>{
+        _.extend(clean, {
+          url: clean.url_o ? clean.url_o : _.get(clean, 'url_l', 'url not found'),
+          thumb: clean.url_sq
+        });
+        _.each(['url_o', 'url_l', 'url_sq'], prop => {
           _.unset(clean, prop);
         });
 

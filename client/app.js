@@ -1,12 +1,18 @@
 'use strict';
 
-angular.module('images', []);
+angular.module('images', [
+  '720kb.datepicker']);
 
 angular.module('images')
   .controller('MainController',
-    function ($http, $log, $q) {
+    function ($http, $log, $q, $timeout) {
 
       var MainController = this;
+
+
+      MainController.now = function () {
+        return new Date();
+      };
 
       var flickr = {
         key: '1bae316db388283e09cfd3bc537484ab',
@@ -14,7 +20,6 @@ angular.module('images')
       };
 
       var setResults = function (list) {
-        list = _.flatten(list);
         console.log('set list to', list);
         MainController.results = list;
       };
@@ -26,76 +31,38 @@ angular.module('images')
         'url_sq',
         'url_o'
       ];
-      var flickrSearch = function (numPages) {
-        if (!numPages) {
-          numPages = 1;
-        }
+      var flickrSearch = function (date, plusOrMinus) {
+          var dateFormat = 'YYYY-MM-DD HH:mm:SS';
+          var min = moment(date).subtract(plusOrMinus, 'minutes').format(dateFormat);
+          var max = moment(date).add(plusOrMinus, 'minutes').format(dateFormat);// + 8000;
 
-        var url = 'https://api.flickr.com/services/rest';
-        var params = {
-          api_key: flickr.key,
-          method: 'flickr.photos.getRecent',
-          format: 'json',
-//          text: q || 'sunset',
-          extras: fields.join(','),
-          per_page: 10,
-          //tags:'tag',
-          //&nojsoncallback=
-          nojsoncallback: 1,
-          min_upload_date: '',
-          max_upload_date: ''
-        };
-
-        var page = 1;
-        var requests = [];
-
-        while (page <= numPages) {
-          console.log('loading page '+page);
-          var theParams = _.extend(_.clone(params), {page: page});
-          console.log(theParams);
-          requests.push(
-            $http.get(url, {
-              params: theParams
-            })
-              .then(function (result) {
-                console.log(result.data);
-                return result.data.photos.photo
-              })
-          );
-          page = page + 1;
-        }
-        return $q.all(requests)
-          .then(setResults)
-          .catch(function (error) {
-            $log.error(error);
-          });
-      };
-
-
-      var googleSearch = function (q) {
-        var key = 'AIzaSyDDQ9IirI7awAqEd8Cs1uZXOjCsrvvXzGc';
-        var cx = '000470345141694594996:sdx6p7dlw3o';
-
-        var url = 'https://www.googleapis.com/customsearch/v1';
-        return $http.get(url, {
-          params: {
-            key: key,
-            q: q || 'sunset',
-            cx: cx,
-            searchType: 'image',
-            dateRestrict: 'd8',
-            imgType: 'photo',
-            siteSearchFilter: 'i'
-          }
-        })
-          .then(function (result) {
-            return result.data.items
+          $http.get('/search', {
+            params: {
+              q: {
+                $and: [
+                  {
+                    datetaken: {
+                      $gte: min
+                    }
+                  },
+                  {
+                    datetaken: {
+                      $lte: max
+                    }
+                  }
+                ]
+              }
+            }
           })
-          .then(setResults)
-          .catch(function (error) {
-            $log.error(error);
-          });
-      };
+            .then(function (results) {
+              return _.get(results, 'data.photos');
+            })
+            .then(setResults)
+            .catch(function (error) {
+              $log.error(error);
+            });
+        }
+        ;
 
       MainController.render = function (obj) {
         var rendered = {};
@@ -106,7 +73,6 @@ angular.module('images')
         return rendered;
 
       };
-
 
       MainController.setResults = setResults;
       MainController.flickrSearch = flickrSearch;

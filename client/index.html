@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Title</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body ng-app="images">
 
@@ -10,20 +11,30 @@
 
   <h1>search</h1>
   <label for="date"> date </label>
-  <input id="date" ng-model="date" type="datetime-local">
-  <button ng-click="ctrl.flickrSearch(date)">flickr</button>
+
+
+  photos taken at
+    <input id="date" type="datetime-local"  ng-model="date" >
+
+    </input>
+
+
+  +/-<input id="plus-minus" ng-model="plusOrMinus" type="number" max="60" ng-init="plusOrMinus = 1"> minutes
+  <button ng-click="ctrl.flickrSearch(date, plusOrMinus)">flickr</button>
+  <pre ng-if="range">{{range | json}}</pre>
 
 
   <div show-if-loading>loading.......</div>
   <ul>
     <li ng-repeat="result in ctrl.results">
-      date taken: {{result.datetaken}} {{result.datetakenunknown? '(?)':''}}<br/>
-      date uploaded: {{result.dateupload*1000 | date}}<br/>
-                <pre ng-if="false">
+      date taken: <br/>{{result.datetaken}} {{result.datetakenunknown? '(?)':''}}<br/>
+      <!--date uploaded: <br/>{{result.dateupload*1000 | date}}<br/>
+      -->
+      <pre ng-if="false">
                   RESULT JSON <br/>{{result | json}}
                 </pre>
-      <a ng-href="{{result.url_o}}" target="_blank">
-        <img ng-src="{{result.url_sq}}" width="300"/>
+      <a ng-href="{{result.url}}" target="_blank" class="thumbnail">
+        <img ng-src="{{result.thumb}}" width="300"/>
       </a>
     </li>
   </ul>
@@ -46,8 +57,11 @@
 -->
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.1/angular.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/angularjs-datepicker/2.1.19/angular-datepicker.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-local-storage/0.5.2/angular-local-storage.min.js"></script>
+
 <script src="app.js"></script>
 </body>
 </html>

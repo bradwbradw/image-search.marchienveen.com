@@ -81,9 +81,20 @@ const count = () => {
     })
 
 };
+
+const remove = () => {
+  return mongo()
+    .then(collection => {
+      return collection.findOneAndDelete({}, {
+        sort:{datetaken:1}
+      })
+    })
+};
+
 module.exports = {
   upsert,
   get,
   getById,
+  remove,
   count
 };

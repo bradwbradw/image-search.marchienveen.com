@@ -7,7 +7,7 @@ const request = require('request-promise'),
 const key = process.env.FLICKR_API_KEY || '1bae316db388283e09cfd3bc537484ab';
 const flickrUrl = process.env.FLICKR_API_URL || 'https://api.flickr.com/services/rest';
 
-const perPage = 500;
+const perPage = process.env.PER_PAGE || 500;
 
 const fields = [
   'date_upload',
@@ -33,7 +33,7 @@ module.exports = {
       format: 'json',
 //          text: q || 'sunset',
       extras: fields.join(','),
-      per_page: perPage,
+      per_page: perPage*1,
       //tags:'tag',
       //&nojsoncallback=
       nojsoncallback: 1,

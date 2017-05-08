@@ -5,7 +5,7 @@ const express = require('express'),
 
 const port = process.env.PORT || 8081;
 const MAX_IMAGES = process.env.MAX_IMAGES || 1000000;
-const LOAD_INTERVAL = process.env.LOAD_INTERVAL || 5*60*1000;
+const LOAD_INTERVAL = process.env.LOAD_INTERVAL || 5 * 60 * 1000;
 
 const db = require('./mongo'),
   flickr = require('./flickr');
@@ -41,17 +41,28 @@ app.get('/search', (req, res) => {
   }
 });
 
+function removeOldest(n){
+  if(!_.isNumber(n)){
+    n = 0;
+  } else {
+    console.log(`removing ${n} documents`);
+  }
+
+  let removals = when.resolve();
+  while(n > 0){
+    removals = removals.then(db.remove());
+    n--;
+  }
+
+}
+
 function loadFlickr() {
   let count;
 
   return db.count()
     .then(c => {
-      if (c >= MAX_IMAGES) {
-        return when.reject('max photos reached');
-      } else {
-        count = c;
-        return flickr.getRecent(2);
-      }
+      count = c;
+      return flickr.getRecent(2);
     })
     .then(results => {
       return when.all(_.map(results, db.upsert))
@@ -60,6 +71,10 @@ function loadFlickr() {
     .then(newTotal => {
       let info = {newTotal, justAdded: (newTotal - count)};
       console.log(info);
+
+      if (count >= MAX_IMAGES) {
+        removeOldest(count - MAX_IMAGES);
+      }
       return info
     })
 }

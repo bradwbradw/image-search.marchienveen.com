@@ -27,16 +27,23 @@ let collectionPromise;
 
 function mongo() {
   if (!collection && !collectionPromise) {
+    console.log('creating new mongo')
+
     collectionPromise = MongoClient.connect(mongoUrl)
       .then(mongoConnection => {
         collection = mongoConnection.collection('flickr-recent');
         return collection;
+      })
+      .catch(err => {
+        console.error('cant connect to mongo ', err);
+        throw new Error(err);
       });
     return collectionPromise;
+  } else if(collection){
+     return when.resolve(collection);//collectionPromise
   } else if(collectionPromise){
-     return collectionPromise
-  } else {
-    return when.resolve(collection);
+    console.log('returning collection promise')
+    return collectionPromise;
   }
 }
 

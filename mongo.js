@@ -31,6 +31,7 @@ function mongo() {
 
     collectionPromise = MongoClient.connect(mongoUrl)
       .then(mongoConnection => {
+        console.log('getting collection flick-recent');
         collection = mongoConnection.collection('flickr-recent');
         return collection;
       })
@@ -40,9 +41,10 @@ function mongo() {
       });
     return collectionPromise;
   } else if(collection){
+    console.log('returning resolve of collection');
      return when.resolve(collection);//collectionPromise
   } else if(collectionPromise){
-    console.log('returning collection promise')
+    console.log('returning collection promise');
     return collectionPromise;
   }
 }

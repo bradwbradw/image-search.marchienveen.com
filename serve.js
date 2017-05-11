@@ -41,15 +41,15 @@ app.get('/search', (req, res) => {
   }
 });
 
-function removeOldest(n){
-  if(!_.isNumber(n)){
+function removeOldest(n) {
+  if (!_.isNumber(n)) {
     n = 0;
   } else {
     console.log(`removing ${n} documents`);
   }
 
   let removals = when.resolve();
-  while(n > 0){
+  while (n > 0) {
     removals = removals.then(db.remove());
     n--;
   }
@@ -79,8 +79,6 @@ function loadFlickr() {
     })
 }
 
-loadFlickr();
-setInterval(loadFlickr, LOAD_INTERVAL);
 
 app.get('/load-flickr', (req, res) => {
 
@@ -108,4 +106,12 @@ app.get('/all', (req, res) => {
     });
 });
 
-app.listen(port);
+db.mongo()
+  .then(() => {
+
+    loadFlickr();
+    setInterval(loadFlickr, LOAD_INTERVAL);
+    app.listen(port);
+
+  });
+

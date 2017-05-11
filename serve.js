@@ -14,7 +14,6 @@ const app = express();
 
 app.use(express.static('client'));
 
-console.log(`listening at ${port} `);
 
 app.get('/search', (req, res) => {
   let query;
@@ -66,7 +65,7 @@ function loadFlickr() {
     })
     .then(results => {
       return when.all(_.map(results, result => {
-     //   console.log(result);
+        //   console.log(result);
         return db.upsert(result);
       }))
     })
@@ -96,26 +95,27 @@ app.get('/load-flickr', (req, res) => {
 });
 /*
 
-app.get('/all', (req, res) => {
-  db.get({})
-    .then(result => {
-      res.json({
-        count: _.size(result),
-        photos: _.reverse(_.sortBy(result, 'datetaken'))
-      });
-    })
-    .catch(err => {
-      console.error(err);
-      res.status(500).json({message: 'error fetching', error: err});
-    });
-});
-*/
+ app.get('/all', (req, res) => {
+ db.get({})
+ .then(result => {
+ res.json({
+ count: _.size(result),
+ photos: _.reverse(_.sortBy(result, 'datetaken'))
+ });
+ })
+ .catch(err => {
+ console.error(err);
+ res.status(500).json({message: 'error fetching', error: err});
+ });
+ });
+ */
 
 db.mongo()
   .then((res) => {
     console.log('done collection', res);
 //    loadFlickr();
 //    setInterval(loadFlickr, LOAD_INTERVAL);
+    console.log(`listening at ${port} `);
     app.listen(port);
 
   })

@@ -5,7 +5,7 @@
   "main": "serve.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start":"node serve"
+    "start": "node --max_old_space_size=409 serve"
   },
   "repository": {
     "type": "git",

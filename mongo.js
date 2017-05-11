@@ -34,10 +34,6 @@ function mongo() {
         console.log('getting collection flick-recent');
         collection = mongoConnection.collection('flickr-recent');
         return collection;
-      })
-      .catch(err => {
-        console.error('cant connect to mongo ', err);
-        throw new Error(err);
       });
     return collectionPromise;
   } else if (collection) {

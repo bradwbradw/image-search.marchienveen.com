@@ -112,11 +112,14 @@ app.get('/all', (req, res) => {
 */
 
 db.mongo()
-  .then(() => {
-
-    loadFlickr();
-    setInterval(loadFlickr, LOAD_INTERVAL);
+  .then((res) => {
+    console.log('done collection', res);
+//    loadFlickr();
+//    setInterval(loadFlickr, LOAD_INTERVAL);
     app.listen(port);
 
+  })
+  .catch(err => {
+    console.error('error loading mongo ', err);
   });
 

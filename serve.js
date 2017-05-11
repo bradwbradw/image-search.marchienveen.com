@@ -65,7 +65,10 @@ function loadFlickr() {
       return flickr.getRecent(2);
     })
     .then(results => {
-      return when.all(_.map(results, db.upsert))
+      return when.all(_.map(results, result => {
+     //   console.log(result);
+        return db.upsert(result);
+      }))
     })
     .then(db.count)
     .then(newTotal => {
@@ -91,6 +94,7 @@ app.get('/load-flickr', (req, res) => {
       res.status(500).json({error: err});
     });
 });
+/*
 
 app.get('/all', (req, res) => {
   db.get({})
@@ -105,6 +109,7 @@ app.get('/all', (req, res) => {
       res.status(500).json({message: 'error fetching', error: err});
     });
 });
+*/
 
 db.mongo()
   .then(() => {

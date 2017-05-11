@@ -113,8 +113,8 @@ app.get('/load-flickr', (req, res) => {
 db.mongo()
   .then((res) => {
     console.log('done collection', res);
-//    loadFlickr();
-//    setInterval(loadFlickr, LOAD_INTERVAL);
+    loadFlickr();
+    setInterval(loadFlickr, LOAD_INTERVAL);
     console.log(`listening at ${port} `);
     app.listen(port);
 

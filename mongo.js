@@ -41,10 +41,10 @@ function mongo() {
       });
     return collectionPromise;
   } else if(collection){
-    console.log('returning resolve of collection');
+//    console.log('returning resolve of collection');
      return when.resolve(collection);//collectionPromise
   } else if(collectionPromise){
-    console.log('returning collection promise');
+//    console.log('returning collection promise');
     return collectionPromise;
   }
 }

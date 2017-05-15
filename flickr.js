@@ -83,7 +83,7 @@ module.exports = {
     return when.all(requests)
       .then(clean)
       .catch(err => {
-        console.error(err);
+        console.error('error loading from flickr:', err);
         return when.reject(err);
       })
   }

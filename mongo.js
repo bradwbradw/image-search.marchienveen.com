@@ -31,7 +31,7 @@ function mongo() {
 
     collectionPromise = MongoClient.connect(mongoUrl)
       .then(mongoConnection => {
-        console.log('getting collection flick-recent');
+        console.log('getting collection flickr-recent');
         collection = mongoConnection.collection('flickr-recent');
         return collection;
       })
@@ -57,8 +57,12 @@ const upsert = record => {
   return mongo()
     .then(collection => {
       return collection.insertOne(record)
-        .catch(() => {
-          return collection.findOneAndUpdate({_id: record._id}, record);
+        .catch((err) => {
+          console.error('insertOne error', err);
+          return collection.findOneAndUpdate({_id: record._id}, record)
+            .catch(err => {
+              console.error('findOneAndUpdate error', err);
+            });
         })
     })
     .catch(err => {

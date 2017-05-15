@@ -26,6 +26,8 @@ app.get('/search', (req, res) => {
   if (query) {
     db.get(query)
       .then(result => {
+
+        console.log(`/load-flickr ${query}`)
         res.json({
           count: _.size(result),
           q: query,

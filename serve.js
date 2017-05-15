@@ -14,6 +14,7 @@ const app = express();
 
 app.use(express.static('client'));
 
+console.log(`listening at ${port} `);
 
 app.get('/search', (req, res) => {
   let query;
@@ -40,15 +41,15 @@ app.get('/search', (req, res) => {
   }
 });
 
-function removeOldest(n) {
-  if (!_.isNumber(n)) {
+function removeOldest(n){
+  if(!_.isNumber(n)){
     n = 0;
   } else {
     console.log(`removing ${n} documents`);
   }
 
   let removals = when.resolve();
-  while (n > 0) {
+  while(n > 0){
     removals = removals.then(db.remove());
     n--;
   }
@@ -64,10 +65,7 @@ function loadFlickr() {
       return flickr.getRecent(2);
     })
     .then(results => {
-      return when.all(_.map(results, result => {
-        //   console.log(result);
-        return db.upsert(result);
-      }))
+      return when.all(_.map(results, db.upsert))
     })
     .then(db.count)
     .then(newTotal => {
@@ -81,6 +79,8 @@ function loadFlickr() {
     })
 }
 
+loadFlickr();
+setInterval(loadFlickr, LOAD_INTERVAL);
 
 app.get('/load-flickr', (req, res) => {
 
@@ -93,33 +93,19 @@ app.get('/load-flickr', (req, res) => {
       res.status(500).json({error: err});
     });
 });
-/*
 
- app.get('/all', (req, res) => {
- db.get({})
- .then(result => {
- res.json({
- count: _.size(result),
- photos: _.reverse(_.sortBy(result, 'datetaken'))
- });
- })
- .catch(err => {
- console.error(err);
- res.status(500).json({message: 'error fetching', error: err});
- });
- });
- */
+app.get('/all', (req, res) => {
+  db.get({})
+    .then(result => {
+      res.json({
+        count: _.size(result),
+        photos: _.reverse(_.sortBy(result, 'datetaken'))
+      });
+    })
+    .catch(err => {
+      console.error(err);
+      res.status(500).json({message: 'error fetching', error: err});
+    });
+});
 
-db.mongo()
-  .then((res) => {
-    console.log('done collection', res);
-    loadFlickr();
-    setInterval(loadFlickr, LOAD_INTERVAL);
-    console.log(`listening at ${port} `);
-    app.listen(port);
-
-  })
-  .catch(err => {
-    console.error('error loading mongo ', err);
-  });
-
+app.listen(port);

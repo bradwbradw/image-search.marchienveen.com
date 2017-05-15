@@ -64,7 +64,7 @@ function loadFlickr() {
   return db.count()
     .then(c => {
       count = c;
-      return flickr.getRecent(2);
+      return flickr.getRecent();
     })
     .then(results => {
       return when.all(_.map(results, db.upsert))

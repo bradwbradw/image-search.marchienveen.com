@@ -5,23 +5,23 @@ const MongoClient = require('mongodb').MongoClient,
 
 /*
 
-let mongoConnectionPromise;
-let collectionPromise;
-function mongo() {
-  if (mongoConnectionPromise) {
-    return mongoConnectionPromise
-  }
-  if (mongoConnection) {
-    p = when.resolve(mongoConnection);
-  } else {
-    p = MongoClient.connect(mongoUrl);
-  }
-  return p.then(db => {
-    mongoConnection = db;
-    return mongoConnection.collection('flickr-recent');
-  });
+ let mongoConnectionPromise;
+ let collectionPromise;
+ function mongo() {
+ if (mongoConnectionPromise) {
+ return mongoConnectionPromise
+ }
+ if (mongoConnection) {
+ p = when.resolve(mongoConnection);
+ } else {
+ p = MongoClient.connect(mongoUrl);
+ }
+ return p.then(db => {
+ mongoConnection = db;
+ return mongoConnection.collection('flickr-recent');
+ });
 
-}*/
+ }*/
 let collection;
 let collectionPromise;
 
@@ -40,17 +40,17 @@ function mongo() {
         throw new Error(err);
       });
     return collectionPromise;
-  } else if(collection){
+  } else if (collection) {
 //    console.log('returning resolve of collection');
-     return when.resolve(collection);//collectionPromise
-  } else if(collectionPromise){
+    return when.resolve(collection);//collectionPromise
+  } else if (collectionPromise) {
 //    console.log('returning collection promise');
     return collectionPromise;
   }
 }
 
 const upsert = record => {
-  if(record.id){
+  if (record.id) {
     record._id = record.id;
     record = _.omit(record, 'id');
   }
@@ -58,11 +58,13 @@ const upsert = record => {
     .then(collection => {
       return collection.insertOne(record)
         .catch((err) => {
-          console.error('insertOne error', err);
-          return collection.findOneAndUpdate({_id: record._id}, record)
-            .catch(err => {
-              console.error('findOneAndUpdate error', err);
-            });
+          if (err.code === 11000) {
+//            console.log(`duplicate detected. updating ${record._id}`);
+            return collection.findOneAndUpdate({_id: record._id}, record)
+          } else {
+            console.error('insertOne error', err);
+            return when.reject(err);
+          }
         })
     })
     .catch(err => {
@@ -99,7 +101,7 @@ const remove = () => {
   return mongo()
     .then(collection => {
       return collection.findOneAndDelete({}, {
-        sort:{datetaken:1}
+        sort: {datetaken: 1}
       })
     })
 };

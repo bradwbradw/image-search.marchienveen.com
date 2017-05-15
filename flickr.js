@@ -65,8 +65,9 @@ module.exports = {
     }
 
     function clean(results) {
+        console.log('ready to clean');
       return _.map(_.flatten(results), result => {
-//        console.log('cleaning', result);
+        console.log('cleaning', result);
         let clean = _.pick(result, pickFields);
         _.extend(clean, {
           url: clean.url_o ? clean.url_o : _.get(clean, 'url_l', 'url not found'),

@@ -110,4 +110,8 @@ app.get('/all', (req, res) => {
     });
 });
 
+app.use((req, res, next) => {
+  console.log(req.url);
+  next();
+});
 app.listen(port);

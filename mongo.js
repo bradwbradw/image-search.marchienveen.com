@@ -27,7 +27,7 @@ let collectionPromise;
 
 function mongo() {
   if (!collection && !collectionPromise) {
-    console.log('creating new mongo')
+    console.log('creating new mongo');
 
     collectionPromise = MongoClient.connect(mongoUrl)
       .then(mongoConnection => {

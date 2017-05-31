@@ -19,7 +19,7 @@
     </input>
 
 
-  +/-<input id="plus-minus" ng-model="plusOrMinus" type="number" max="60" ng-init="plusOrMinus = 1"> minutes
+  +/-<input id="plus-minus" ng-model="plusOrMinus" type="number" max="60" ng-init="plusOrMinus = 10"> seconds
   <button ng-click="ctrl.flickrSearch(date, plusOrMinus)">flickr</button>
   <pre ng-if="range">{{range | json}}</pre>
 

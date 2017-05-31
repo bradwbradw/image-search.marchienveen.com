@@ -33,8 +33,8 @@ angular.module('images')
       ];
       var flickrSearch = function (date, plusOrMinus) {
           var dateFormat = 'YYYY-MM-DD HH:mm:SS';
-          var min = moment(date).subtract(plusOrMinus, 'minutes').format(dateFormat);
-          var max = moment(date).add(plusOrMinus, 'minutes').format(dateFormat);// + 8000;
+          var min = moment(date).subtract(plusOrMinus, 'seconds').format(dateFormat);
+          var max = moment(date).add(plusOrMinus, 'seconds').format(dateFormat);// + 8000;
 
           $http.get('/search', {
             params: {

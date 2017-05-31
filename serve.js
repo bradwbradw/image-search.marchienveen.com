@@ -112,6 +112,10 @@ app.get('/all', (req, res) => {
 
 app.use((req, res, next) => {
   console.log(req.url);
+
   next();
 });
+console.log('listening on ',port);
+console.log('configure using environment variables: ');
+console.log('MONGODB_URI, LOAD_INTERVAL (ms between flickr loads), MAX_IMAGES, PER_PAGE, FLICKR_API_URL, FLICKR_API_KEY, PORT');
 app.listen(port);

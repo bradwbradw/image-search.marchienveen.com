@@ -3,27 +3,11 @@ const MongoClient = require('mongodb').MongoClient,
   mongoUrl = process.env.MONGODB_URI || 'mongodb://localhost/images',
   when = require('when');
 
-/*
-
- let mongoConnectionPromise;
- let collectionPromise;
- function mongo() {
- if (mongoConnectionPromise) {
- return mongoConnectionPromise
- }
- if (mongoConnection) {
- p = when.resolve(mongoConnection);
- } else {
- p = MongoClient.connect(mongoUrl);
- }
- return p.then(db => {
- mongoConnection = db;
- return mongoConnection.collection('flickr-recent');
- });
-
- }*/
 let collection;
 let collectionPromise;
+const indexes = [
+  'datetaken'
+];
 
 function mongo() {
   if (!collection && !collectionPromise) {
@@ -33,6 +17,16 @@ function mongo() {
       .then(mongoConnection => {
         console.log('getting collection flickr-recent');
         collection = mongoConnection.collection('flickr-recent');
+        return collection;
+      })
+      .then(collection => {
+        return _.map(indexes, name => {
+          indexObj = {};
+          indexObj[name] = 1;
+          return collection.createIndex(indexObj);
+        })
+      })
+      .then(()=> {
         return collection;
       })
       .catch(err => {
@@ -92,8 +86,8 @@ const count = () => {
 
   return mongo()
     .then(collection => {
-      return collection.count()
-    })
+      return collection.find({}).count();
+    });
 
 };
 

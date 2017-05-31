@@ -5,19 +5,15 @@ angular.module('images', [
 
 angular.module('images')
   .controller('MainController',
-    function ($http, $log, $q, $timeout) {
+    function ($http, $log) {
 
       var MainController = this;
-
 
       MainController.now = function () {
         return new Date();
       };
 
-      var flickr = {
-        key: '1bae316db388283e09cfd3bc537484ab',
-        secret: '16721ac62e8d6a31'
-      };
+      MainController.searched = false;
 
       var setResults = function (list) {
         console.log('set list to', list);
@@ -32,37 +28,37 @@ angular.module('images')
         'url_o'
       ];
       var flickrSearch = function (date, plusOrMinus) {
-          var dateFormat = 'YYYY-MM-DD HH:mm:SS';
-          var min = moment(date).subtract(plusOrMinus, 'seconds').format(dateFormat);
-          var max = moment(date).add(plusOrMinus, 'seconds').format(dateFormat);// + 8000;
+        var dateFormat = 'YYYY-MM-DD HH:mm:ss';
+        var min = moment(date).subtract(plusOrMinus, 'minutes').format(dateFormat);
+        var max = moment(date).add(plusOrMinus, 'minutes').format(dateFormat);// + 8000;
 
-          $http.get('/search', {
-            params: {
-              q: {
-                $and: [
-                  {
-                    datetaken: {
-                      $gte: min
-                    }
-                  },
-                  {
-                    datetaken: {
-                      $lte: max
-                    }
+        MainController.searched = true;
+        $http.get('/search', {
+          params: {
+            q: {
+              $and: [
+                {
+                  datetaken: {
+                    $gte: min
                   }
-                ]
-              }
+                },
+                {
+                  datetaken: {
+                    $lte: max
+                  }
+                }
+              ]
             }
+          }
+        })
+          .then(function (results) {
+            return _.get(results, 'data.photos');
           })
-            .then(function (results) {
-              return _.get(results, 'data.photos');
-            })
-            .then(setResults)
-            .catch(function (error) {
-              $log.error(error);
-            });
-        }
-        ;
+          .then(setResults)
+          .catch(function (error) {
+            $log.error(error);
+          });
+      };
 
       MainController.render = function (obj) {
         var rendered = {};
@@ -73,6 +69,16 @@ angular.module('images')
         return rendered;
 
       };
+
+      MainController.formatTime = function (time) {
+        return moment(time).format('MMM D YYYY, h:mm a');
+      };
+      MainController.fromNow = function (time) {
+        return moment(time).fromNow();
+      };
+
+      MainController.date = new Date();
+      MainController.plusOrMinus = 1;
 
       MainController.setResults = setResults;
       MainController.flickrSearch = flickrSearch;
@@ -93,6 +99,25 @@ angular.module('images')
             element.removeClass('ng-hide');
           } else {
             element.addClass('ng-hide');
+          }
+        });
+      }
+    };
+  }]);
+
+angular.module('images')
+  .directive('hideIfLoading', ['$http', function ($http) {
+    return {
+      restrict: 'A',
+      link: function (scope, element, attrs) {
+        scope.isLoading = function () {
+          return $http.pendingRequests.length > 0;
+        };
+        scope.$watch(scope.isLoading, function (value) {
+          if (value) {
+            element.addClass('ng-hide');
+          } else {
+            element.removeClass('ng-hide');
           }
         });
       }

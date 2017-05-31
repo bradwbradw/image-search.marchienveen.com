@@ -10,24 +10,24 @@
 <div ng-controller="MainController as ctrl">
 
   <h1>search</h1>
-  <label for="date"> date </label>
-
 
   photos taken at
-    <input id="date" type="datetime-local"  ng-model="date" >
+    <input id="date" type="datetime-local"  ng-model="ctrl.date">
 
     </input>
 
-
-  +/-<input id="plus-minus" ng-model="plusOrMinus" type="number" max="60" ng-init="plusOrMinus = 10"> seconds
-  <button ng-click="ctrl.flickrSearch(date, plusOrMinus)">flickr</button>
+  +/- <input id="plus-minus" ng-model="ctrl.plusOrMinus" type="number" max="60" > minutes
+  <button ng-click="ctrl.flickrSearch(ctrl.date, ctrl.plusOrMinus)">flickr</button>
   <pre ng-if="range">{{range | json}}</pre>
 
 
   <div show-if-loading>loading.......</div>
+  <div hide-if-loading ng-if="!ctrl.results[0] && ctrl.searched"> no results </div>
   <ul>
     <li ng-repeat="result in ctrl.results">
-      date taken: <br/>{{result.datetaken}} {{result.datetakenunknown? '(?)':''}}<br/>
+      {{ctrl.formatTime(result.datetaken)}}
+      <br/>{{ctrl.fromNow(result.datetaken)}}
+      <br/>
       <!--date uploaded: <br/>{{result.dateupload*1000 | date}}<br/>
       -->
       <pre ng-if="false">
